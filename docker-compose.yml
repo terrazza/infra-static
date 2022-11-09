@@ -8,8 +8,8 @@ services:
     volumes:
       - ./public:/usr/share/nginx
       - ./deploy/base/nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./deploy/base/nginx/sites:/etc/nginx/sites-available
-      - ./deploy/base/nginx/sites:/etc/nginx/sites-enabled
+      - ./deploy/base/nginx/locations/:/etc/nginx/locations
+      - ./api/001/src:/usr/share/php/001
     restart: unless-stopped
     environment:
       NGINX_IMAGE_NAME: nginx
@@ -22,8 +22,10 @@ services:
     build:
       context: .
       target: app_php
-#    volumes:
-#      - ./deploy/base/nginx/php.site.conf:/etc/nginx/conf.d/php.site.conf
+    volumes:
+      - ./api/001/src:/var/www/html
+    ports:
+      - 9000:80
     environment:
       PHP_IMAGE_NAME: php
       PHP_IMAGE_TAG: 8.1-fpm-alpine

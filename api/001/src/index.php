@@ -7,6 +7,8 @@
     <title>noFramework.io</title>
 </head>
 <body>
-hello world: presented by html
+<?php
+echo "hello world: presented by php at ".date('Y-m-d H:i:s');
+?>
 </body>
 </html>

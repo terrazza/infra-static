@@ -3,23 +3,19 @@ source $(realpath $(dirname "$0")/.helper)
 
 OPTIONS=()
 case ${1} in
-  compose)
+  down)
+    CMD="docker-compose ${1}"
+  ;;
+  stop)
+    CMD="docker-compose ${1}"
+  ;;
+  up)
     case ${2} in
-      down)
-        CMD="docker-compose ${2}"
-      ;;
-      up)
-        case ${3} in
-          -d)
-          OPTIONS+=(${3})
-          ;;
-        esac
-        CMD="docker-compose ${2}"
-      ;;
-      *)
-        error_exit "supported arguments for [COMMAND=compose] are: down,up"
+      -d)
+      OPTIONS+=(${2})
       ;;
     esac
+    CMD="docker-compose ${1}"
   ;;
   logs)
     if [ -z ${2} ]; then
@@ -46,9 +42,11 @@ case ${1} in
   --help|*)
     echo "Usage: docker.sh [COMMAND] {CONTAINER}"
     echo ""
-    echo "Commands: "
-    echo "   exec            call docker exec -it for given [container]"
-    echo "   logs            log the given [container]"
+    echo "COMMANDs: "
+    echo "   up              run docker-composer up (optional arguments: -d)"
+    echo "   down            run docker-composer down"
+    echo "   exec            run docker exec -it for given [CONTAINER]"
+    echo "   logs            run docker logs for given [CONTAINER]"
     echo ""
     exit 1;
   ;;
