@@ -1,0 +1,31 @@
+version: "3.4"
+
+services:
+  nginx:
+    build:
+      context: .
+      target: app_nginx
+    volumes:
+      - ./public:/usr/share/nginx
+      - ./deploy/base/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./deploy/base/nginx/sites:/etc/nginx/sites-available
+      - ./deploy/base/nginx/sites:/etc/nginx/sites-enabled
+    restart: unless-stopped
+    environment:
+      NGINX_IMAGE_NAME: nginx
+      NGINX_IMAGE_TAG: 1.20-alpine
+    ports:
+      - 80:80
+      - 443:443
+
+  php:
+    build:
+      context: .
+      target: app_php
+#    volumes:
+#      - ./deploy/base/nginx/php.site.conf:/etc/nginx/conf.d/php.site.conf
+    environment:
+      PHP_IMAGE_NAME: php
+      PHP_IMAGE_TAG: 8.1-fpm-alpine
+      PHP_APK_TMP_EXT: autoconf
+      PHP_APK_EXT: nano git nginx curl php8 php8-ctype php8-curl php8-dom php8-fpm php8-gd php8-intl php8-json php8-mbstring php8-mysqli php8-opcache php8-openssl php8-phar php8-session php8-xml php8-xmlreader php8-zlib
