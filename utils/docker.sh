@@ -3,10 +3,7 @@ source $(realpath $(dirname "$0")/.helper)
 
 OPTIONS=()
 case ${1} in
-  down)
-    CMD="docker-compose ${1}"
-  ;;
-  stop)
+  down|stop|build)
     CMD="docker-compose ${1}"
   ;;
   up)
@@ -31,21 +28,25 @@ case ${1} in
         ;;
     esac
   ;;
-  exec)
+  sh|bash)
     if [ -z ${2} ]; then
       error_exit "argument missing: <CONTAINER>"
     fi
     CONTAINER_ID=$(getContainerId "${2}")
-    CMD="docker ${1} -it ${CONTAINER_ID}"
-    OPTIONS+=("/bin/sh")
+    CMD="docker exec -it ${CONTAINER_ID}"
+    OPTIONS+=("/bin/${1}")
     ;;
   --help|*)
     echo "Usage: docker.sh [COMMAND] {CONTAINER}"
     echo ""
-    echo "COMMANDs: "
+    echo "...docker-compose COMMAND list:"
+    echo "   build           run docker-composer build"
     echo "   up              run docker-composer up (optional arguments: -d)"
     echo "   down            run docker-composer down"
-    echo "   exec            run docker exec -it for given [CONTAINER]"
+    echo "   stop            run docker-composer stop"
+    echo "....docker COMMAND list:"
+    echo "   sh              run docker exec -it /bin/sh for given [CONTAINER]"
+    echo "   bash            run docker exec -it /bin/bash for given [CONTAINER]"
     echo "   logs            run docker logs for given [CONTAINER]"
     echo ""
     exit 1;
