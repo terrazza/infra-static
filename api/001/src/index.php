@@ -27,7 +27,7 @@ if (class_exists($PDOClassName)) {
             $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             echo "$DB_MSG successfully";
         } catch (PDOException $e) {
-            echo "$DB_MSG failed<br>&nbsp;" . $e->getMessage();
+            echo "$DB_MSG failed<br>&nbsp;" . $e->getMessage() . "[" . $e->getCode(). "]";
         }
         echo "<br>";
     } else {

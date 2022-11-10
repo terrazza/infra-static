@@ -24,24 +24,18 @@ services:
       dockerfile: Dockerfile.PHP
       target: app_php
       args:
-        - WORK_DIR=/var/www/html
-        - IMAGE_NAME=php
-        - IMAGE_TAG=8.1-fpm-alpine
-        - COMPOSER_TAG=2.0
-        - APK_ADD=nano bash mysql-client
-        - EXT_INSTALL=mysqli pdo_mysql
+        - WORK_DIR=${PHP_WORK_DIR}
+        - IMAGE_NAME=${PHP_IMAGE_NAME}
+        - IMAGE_TAG=${PHP_IMAGE_TAG}
+        - COMPOSER_TAG=${PHP_COMPOSER_TAG}
 #
-#        - WORK_DIR=${PHP_WORK_DIR}
-#        - IMAGE_NAME=${PHP_IMAGE_NAME}
-#        - IMAGE_TAG=${PHP_IMAGE_TAG}
-#        - COMPOSER_TAG=${PHP_COMPOSER_TAG}
-#        - APK_ADD=${PHP_APK_ADD}
-#        - EXT_INSTALL=${PHP_EXT_INSTALL}
-#
-#        EXT_INSTALL: mysqli pdo_mysql
-#        YAML_VERSION: 1.1
-#        REDIS_VERSION: 5.3.7
-#        COMPOSER_TAG:${PHP_COMPOSER_TAG}
+        - APK_TMP_ADD=${PHP_APK_TMP_ADD}
+        - APK_ADD=${PHP_APK_ADD}
+        - EXT_CONFIG=${PHP_EXT_CONFIG}
+        - EXT_INSTALL=${PHP_EXT_INSTALL}
+        - PLUGIN_MYSQL=${PHP_PLUGIN_MYSQL}
+        - PLUGIN_YAML_VERSION=${PHP_PLUGIN_YAML_VERSION}
+        - PLUGIN_REDIS_VERSION=${PHP_PLUGIN_REDIS_VERSION}
     volumes:
       - ./api/001/src:/var/www/html
     environment:

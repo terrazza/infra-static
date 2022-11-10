@@ -7,30 +7,6 @@ function error_exit() {
   exit 1
 }
 
-function array2string () {
-  local PRE="$1"
-  local SPLIT=""
-  local DELIMITER="$2"
-  local POST="$3"
-  local RESPONSE=""
-  shift
-  shift
-  shift
-  local arr=("$@")
-  if [ "${#arr[@]}" -gt 0 ]; then
-    RESPONSE=${PRE}
-  fi
-  for PART in "${arr[@]}";
-    do
-      RESPONSE="${RESPONSE}${SPLIT}${PART}"
-      SPLIT=${DELIMITER}
-    done
-  if [ "${#arr[@]}" -gt 0 ]; then
-    RESPONSE="${RESPONSE}${POST}"
-  fi
-  echo "${RESPONSE}"
-}
-
 function getContainerId {
   local ID=$(docker ps | grep "${1}-" | awk '{print $1}')
   if [[ -z ${ID} ]]; then
