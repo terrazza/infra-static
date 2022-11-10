@@ -3,8 +3,16 @@ source $(realpath $(dirname "$0")/.helper)
 
 OPTIONS=()
 case ${1} in
-  down|stop|build)
+  down|stop)
     CMD="docker-compose ${1}"
+  ;;
+  build)
+    CMD="docker-compose ${1}"
+    case ${2} in
+      --no-cache)
+      OPTIONS+=(${2})
+      ;;
+    esac
   ;;
   up)
     case ${2} in
@@ -20,6 +28,7 @@ case ${1} in
     fi
     CONTAINER_ID=$(getContainerId "${2}")
     CMD="docker ${1} ${CONTAINER_ID}"
+    echo ":${CMD}:"
     case ${3} in
       -f)
         OPTIONS+=(${3})
@@ -40,7 +49,7 @@ case ${1} in
     echo "Usage: docker.sh [COMMAND] {CONTAINER}"
     echo ""
     echo "...docker-compose COMMAND list:"
-    echo "   build           run docker-composer build"
+    echo "   build           run docker-composer build (optional arguments: --no-cache)"
     echo "   up              run docker-composer up (optional arguments: -d)"
     echo "   down            run docker-composer down"
     echo "   stop            run docker-composer stop"

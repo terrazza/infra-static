@@ -7,8 +7,8 @@ services:
       dockerfile: Dockerfile.Nginx
       target: app_nginx
       args:
-        IMAGE_NAME: nginx
-        IMAGE_TAG: 1.20-alpine
+      - IMAGE_NAME=nginx
+      - IMAGE_TAG=1.20-alpine
     volumes:
       - ./public:/usr/share/nginx
       - ./deploy/base/nginx/nginx.conf:/etc/nginx/nginx.conf
@@ -24,12 +24,24 @@ services:
       dockerfile: Dockerfile.PHP
       target: app_php
       args:
-        IMAGE_NAME: php
-        IMAGE_TAG: 8.1-fpm-alpine
-        APK_ADD: nano bash mysql-client
-        EXT_INSTALL: mysqli pdo_mysql
-        YAML_VERSION: 1.1
-        REDIS_VERSION: 5.3.7
+        - WORK_DIR=/var/www/html
+        - IMAGE_NAME=php
+        - IMAGE_TAG=8.1-fpm-alpine
+        - COMPOSER_TAG=2.0
+        - APK_ADD=nano bash mysql-client
+        - EXT_INSTALL=mysqli pdo_mysql
+#
+#        - WORK_DIR=${PHP_WORK_DIR}
+#        - IMAGE_NAME=${PHP_IMAGE_NAME}
+#        - IMAGE_TAG=${PHP_IMAGE_TAG}
+#        - COMPOSER_TAG=${PHP_COMPOSER_TAG}
+#        - APK_ADD=${PHP_APK_ADD}
+#        - EXT_INSTALL=${PHP_EXT_INSTALL}
+#
+#        EXT_INSTALL: mysqli pdo_mysql
+#        YAML_VERSION: 1.1
+#        REDIS_VERSION: 5.3.7
+#        COMPOSER_TAG:${PHP_COMPOSER_TAG}
     volumes:
       - ./api/001/src:/var/www/html
     environment:
@@ -47,8 +59,8 @@ services:
       dockerfile: Dockerfile.MariaDB
       target: app_db
       args:
-        IMAGE_NAME: mariadb
-        IMAGE_TAG: 10.9.3
+        - IMAGE_NAME=mariadb
+        - IMAGE_TAG=10.9.3
     environment:
       - MYSQL_ROOT_PASSWORD=S3cret
       - MYSQL_DATABASE=${DATABASE_NAME}
@@ -65,8 +77,8 @@ services:
       dockerfile: Dockerfile.PHPMyAdmin
       target: app_php_myadmin
       args:
-        IMAGE_NAME: phpmyadmin/phpmyadmin
-        IMAGE_TAG: latest
+        - IMAGE_NAME=phpmyadmin/phpmyadmin
+        - IMAGE_TAG=latest
     ports:
       - "8080:80"
     environment:

@@ -7,9 +7,11 @@
     <title>noFramework.io</title>
 </head>
 <body>
-<h1>summary (php:<?=phpversion()?>)</h1>
-<h3>current datetime</h3>
-<?=date('Y-m-d H:i:s'); ?>
+<h1>summary (php:<?=phpversion()?>, now:<?=date('Y-m-d H:i:s')?>)</h1>
+<h3>envs</h3>
+<pre><?php $envs=getenv();ksort($envs); print_r($envs);?></pre>
+<h3>extensions</h3>
+<pre><?php $extensions=get_loaded_extensions();sort($extensions);print_r($extensions);?></pre>
 <h3>database</h3>
 <?php
 $PDOClassName       = "PDO";

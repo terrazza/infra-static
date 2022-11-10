@@ -32,7 +32,7 @@ function array2string () {
 }
 
 function getContainerId {
-  local ID=$(docker ps | grep ${1} | awk '{print $1}')
+  local ID=$(docker ps | grep "${1}-" | awk '{print $1}')
   if [[ -z ${ID} ]]; then
     error_exit "docker container ${1} does not exists" >&2
     exit 1

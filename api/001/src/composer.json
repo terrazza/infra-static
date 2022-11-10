@@ -1,0 +1,43 @@
+{
+    "name": "noframework/infra-static-api",
+    "version": "0.1",
+    "description": "helloworld",
+    "license": "MIT",
+    "config" : {
+        "vendor-dir" : "plugin"
+    },
+    "authors": [
+        {
+            "name": "Peter Fux",
+            "email": "it@noframework.io"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://gitlab.autopro24.at/api/v4/group/99/-/packages/composer/packages.json"
+        }
+    ],
+    "require": {
+        "php": ">=8.1",
+        "ext-json": "*",
+        "ext-pdo": "*",
+        "ext-mbstring": "*",
+        "ext-curl": "*",
+        "ext-fileinfo": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "noframework\\InfraStaticApi\\" : "src"
+        }
+    },
+    "require-dev" : {
+        "phpunit/phpunit": "^9.3"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "noframework\\Test\\InfraStaticApi\\": "tests"
+        }
+    },
+    "minimum-stability": "dev"
+}
