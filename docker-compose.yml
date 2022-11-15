@@ -3,16 +3,16 @@ version: "3.4"
 services:
   nginx:
     build:
-      context: deploy/docker
-      dockerfile: Dockerfile.Nginx
+      context: deploy/docker/nginx
+      dockerfile: Dockerfile
       target: app_nginx
       args:
       - IMAGE_NAME=nginx
       - IMAGE_TAG=1.20-alpine
     volumes:
       - ./public:/usr/share/nginx
-      - ./deploy/base/nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./deploy/base/nginx/locations/:/etc/nginx/locations
+      - ./deploy/docker/nginx/conf/nginx.conf:/etc/nginx/nginx.conf
+      - ./deploy/docker/nginx/conf/locations/:/etc/nginx/locations
     restart: unless-stopped
     ports:
       - "80:80"
@@ -20,22 +20,15 @@ services:
 
   php:
     build:
-      context: deploy/docker
-      dockerfile: Dockerfile.PHP
-      target: app_php
+      context: deploy/docker/php
+      dockerfile: Dockerfile
+      target: php-production-stage
       args:
-        - WORK_DIR=${PHP_WORK_DIR}
-        - IMAGE_NAME=${PHP_IMAGE_NAME}
-        - IMAGE_TAG=${PHP_IMAGE_TAG}
-        - COMPOSER_TAG=${PHP_COMPOSER_TAG}
-#
-        - APK_TMP_ADD=${PHP_APK_TMP_ADD}
-        - APK_ADD=${PHP_APK_ADD}
-        - EXT_CONFIG=${PHP_EXT_CONFIG}
-        - EXT_INSTALL=${PHP_EXT_INSTALL}
-        - PLUGIN_MYSQL=${PHP_PLUGIN_MYSQL}
-        - PLUGIN_YAML_VERSION=${PHP_PLUGIN_YAML_VERSION}
-        - PLUGIN_REDIS_VERSION=${PHP_PLUGIN_REDIS_VERSION}
+        - PHP_VERSION=8.1.12
+        - ALPINE_VERSION=3.16
+        - EXPOSE_PORT=9000
+        - YAML_VERSION=2.2.2
+        - REDIS_VERSION=5.3.7
     volumes:
       - ./api/001/src:/var/www/html
     environment:
@@ -49,8 +42,8 @@ services:
 
   db:
     build:
-      context: deploy/docker
-      dockerfile: Dockerfile.MariaDB
+      context: deploy/docker/mariadb
+      dockerfile: Dockerfile
       target: app_db
       args:
         - IMAGE_NAME=mariadb
@@ -67,8 +60,8 @@ services:
 
   phpmyadmin:
     build:
-      context: deploy/docker
-      dockerfile: Dockerfile.PHPMyAdmin
+      context: deploy/docker/phpmyadmin-full
+      dockerfile: Dockerfile
       target: app_php_myadmin
       args:
         - IMAGE_NAME=phpmyadmin/phpmyadmin

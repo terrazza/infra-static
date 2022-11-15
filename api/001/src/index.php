@@ -12,6 +12,8 @@
 <pre><?php $envs=getenv();ksort($envs); print_r($envs);?></pre>
 <h3>extensions</h3>
 <pre><?php $extensions=get_loaded_extensions();sort($extensions);print_r($extensions);?></pre>
+<h3>ini_get_all</h3>
+<pre><?php print_r(ini_get_all());?></pre>
 <h3>database</h3>
 <?php
 $PDOClassName       = "PDO";
