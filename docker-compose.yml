@@ -7,12 +7,13 @@ services:
       dockerfile: Dockerfile
       target: app_nginx
       args:
-      - IMAGE_NAME=nginx
-      - IMAGE_TAG=1.20-alpine
+        - IMAGE_NAME=nginx
+        - IMAGE_TAG=1.20-alpine
+        - CONTENT_FOLDER=/usr/share/nginx
+        - ASSETS_FOLDER=/usr/share/nginx
+        - HTML_FOLDER=/usr/share/nginx
     volumes:
       - ./public:/usr/share/nginx
-      - ./deploy/docker/nginx/conf/nginx.conf:/etc/nginx/nginx.conf
-      - ./deploy/docker/nginx/conf/locations/:/etc/nginx/locations
     restart: unless-stopped
     ports:
       - "80:80"
@@ -26,6 +27,7 @@ services:
       args:
         - PHP_VERSION=8.1.12
         - ALPINE_VERSION=3.16
+        - SERVICE_NAME=php
         - EXPOSE_PORT=9000
         - YAML_VERSION=2.2.2
         - REDIS_VERSION=5.3.7
@@ -57,21 +59,21 @@ services:
       - "3306:3306"
     volumes:
       - mysqldata:/var/lib/mysql
-
-  phpmyadmin:
-    build:
-      context: deploy/docker/phpmyadmin-full
-      dockerfile: Dockerfile
-      target: app_php_myadmin
-      args:
-        - IMAGE_NAME=phpmyadmin/phpmyadmin
-        - IMAGE_TAG=latest
-    ports:
-      - "8080:80"
-    environment:
-      - PMA_HOST=${DATABASE_HOST}
-    depends_on:
-      - db
+#
+#  phpmyadmin:
+#    build:
+#      context: deploy/docker/phpmyadmin
+#      dockerfile: Dockerfile
+#      target: app_php_myadmin
+#      args:
+#        - IMAGE_NAME=phpmyadmin/phpmyadmin
+#        - IMAGE_TAG=latest
+#    ports:
+#      - "8080:80"
+#    environment:
+#      - PMA_HOST=${DATABASE_HOST}
+#    depends_on:
+#      - db
 
 volumes:
   mysqldata:
