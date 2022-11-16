@@ -76,9 +76,18 @@ done
 #
 # execute our just preview prepared CMD
 #
+start=`date +%s`
+echo
+echo "<I>start build.sh: $(date)"
+echo "<I>switch to directory ${DOCKER_FOLDER}"
 if [[ -z ${PREVIEW_CMD} ]]; then
   cd ${DOCKER_FOLDER}
+  echo "<I>execute ${CMD}"
   ${CMD}
 else
-  echo ${CMD}
+  echo "<I>execute ${CMD}"
 fi
+end=`date +%s`
+runtime=$((end-start))
+echo "<I>end build.sh: $(date) (runtime: ${runtime} sec)"
+echo
