@@ -1,21 +1,6 @@
 version: "3.4"
 
 services:
-  nginx:
-    build:
-      context: deploy/docker/nginx
-      dockerfile: Dockerfile
-      target: app_nginx
-      args:
-        - IMAGE_NAME=nginx
-        - IMAGE_TAG=1.20-alpine
-    volumes:
-      - ./public:/usr/share/nginx
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-
   php:
     build:
       context: deploy/docker/php

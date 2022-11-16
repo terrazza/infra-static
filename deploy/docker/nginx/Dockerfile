@@ -8,14 +8,14 @@ ENV APK_ADD \
 
 RUN apk add --update --no-cache ${APK_ADD}
 
-ENV ENV_CONTENT_ROOT_FOLDER=${CONTENT_FOLDER}
-ENV ENV_ASSETS_ROOT_FOLDER=${ASSETS_FOLDER}
-ENV ENV_HTML_ROOT_FOLDER=${HTML_FOLDER}
 ENV ENV_CONFIG_ROOT_FOLDER=/etc/nginx
-ENV ENV_CONFIG_LOCATION_FOLDER=${ENV_CONFIG_ROOT_FOLDER}/locations
+ENV SERVER_NAME=api.noframework.io
+
+COPY conf/dy.nginx.conf ${ENV_CONFIG_ROOT_FOLDER}/dynamic/dy.nginx.conf
+RUN bash -c "envsubst < ${ENV_CONFIG_ROOT_FOLDER}/dynamic/dy.nginx.conf > ${ENV_CONFIG_ROOT_FOLDER}/dynamic/nginx.conf"
 
 COPY conf/nginx.conf ${ENV_CONFIG_ROOT_FOLDER}/nginx.conf
-COPY conf/locations/*.conf ${ENV_CONFIG_LOCATION_FOLDER}/
+COPY conf/locations/*.conf ${ENV_CONFIG_ROOT_FOLDER}/locations/
 
 #
 # add certbot

@@ -1,7 +1,7 @@
 ARG PHP_VERSION
 ARG ALPINE_VERSION
 
-FROM php:${PHP_VERSION}-fpm-alpine${ALPINE_VERSION} as php-production-stage
+FROM php:${PHP_VERSION}-fpm-alpine${ALPINE_VERSION} as production-stage
 
 ARG YAML_VERSION
 ARG EXPOSE_PORT
@@ -103,9 +103,15 @@ ENV PHP_FPM_MAX_REQUESTS="1000"
 # add the configuration files
 #
 COPY php-conf/*.ini $PHP_INI_DIR/conf.d/
-ENV PHP_FPM_INI_DIR="/usr/local/etc/php-fpm.d"
-COPY fpm-conf/*.conf ${PHP_FPM_INI_DIR}/
+# ENV PHP_FPM_INI_DIR="/usr/local/etc/php-fpm.d"
+# COPY fpm-conf/*.conf ${PHP_FPM_INI_DIR}/
 
+#
+# debug-stage
+#
+# FROM production-stage as debug-stage
+#
+# ARG XDEBUG_VERSION
 #
 # local environment
 #
