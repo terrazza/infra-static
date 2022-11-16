@@ -1,0 +1,22 @@
+version: "3.4"
+
+services:
+  php:
+    build:
+      context: .docker/php
+      dockerfile: Dockerfile
+      target: production-stage
+      args:
+        - PHP_IMAGE_NAME=php-fpm
+        - PHP_IMAGE_TAG=1.0.1
+        - COMPOSER_VERSION=2.3
+    volumes:
+      - ./src:/var/www/html
+    environment:
+      - DATABASE_TYPE=${DATABASE_TYPE}
+      - DATABASE_HOST=${DATABASE_HOST}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - DATABASE_USER=${DATABASE_APP_USER}
+      - DATABASE_PWD=${DATABASE_APP_PASSWORD}
+    ports:
+      - "9000:80"
