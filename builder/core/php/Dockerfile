@@ -4,8 +4,6 @@ ARG ALPINE_VERSION
 FROM php:${PHP_VERSION}-fpm-alpine${ALPINE_VERSION} as production-stage
 
 ARG YAML_VERSION
-ARG EXPOSE_PORT
-ARG SERVICE_NAME
 
 ENV BUILD_DEPS \
     $PHPIZE_DEPS \
@@ -91,7 +89,6 @@ ENV PHP_FPM_EMERGENCY_RESTART_INTERVAL="10s"
 ENV PHP_FPM_PROCESS_CONTROL_TIMEOUT="20s"
 # fpm-conf/[www]
 ENV PHP_FPM_USER="www-data"
-ENV PHP_FPM_PM_LISTEN="${SERVICE_NAME}:${EXPOSE_PORT}"
 ENV PHP_FPM_PM="dynamic"
 ENV PHP_FPM_MAX_CHILDREN="5"
 ENV PHP_FPM_START_SERVERS="2"
@@ -103,8 +100,8 @@ ENV PHP_FPM_MAX_REQUESTS="1000"
 # add the configuration files
 #
 COPY php-conf/*.ini $PHP_INI_DIR/conf.d/
-# ENV PHP_FPM_INI_DIR="/usr/local/etc/php-fpm.d"
-# COPY fpm-conf/*.conf ${PHP_FPM_INI_DIR}/
+ENV PHP_FPM_INI_DIR="/usr/local/etc/php-fpm.d"
+COPY fpm-conf/*.conf ${PHP_FPM_INI_DIR}/
 
 #
 # debug-stage

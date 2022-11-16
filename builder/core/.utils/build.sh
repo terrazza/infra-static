@@ -4,7 +4,6 @@ set -e
 BASE_FOLDER=$(realpath $(dirname "$0")/..)
 BUILD_ARG_FILE=".build.args"
 DOCKER_FILE="Dockerfile"
-BUILD_ARG_FILE=".build.args"
 
 function error() {
     echo "Usage: build.sh <DOCKERFOLDER> <TAG> [OPTIONS]"
@@ -80,12 +79,10 @@ start=`date +%s`
 echo
 echo "<I>start build.sh: $(date)"
 echo "<I>switch to directory ${DOCKER_FOLDER}"
+echo "<I>execute ${CMD}"
 if [[ -z ${PREVIEW_CMD} ]]; then
   cd ${DOCKER_FOLDER}
-  echo "<I>execute ${CMD}"
   ${CMD}
-else
-  echo "<I>execute ${CMD}"
 fi
 end=`date +%s`
 runtime=$((end-start))
