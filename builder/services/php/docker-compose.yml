@@ -3,21 +3,15 @@ version: "3.4"
 services:
   php:
     build:
-      context: .docker/php
-      dockerfile: Dockerfile
-      target: build-stage
-#      target: production-stage
+      context: ./app
+      dockerfile: app/.docker/php/Dockerfile
       args:
-        - IMAGE_NAME=php-fpm
-        - IMAGE_TAG=1.0.1
-        - COMPOSER_VERSION=2.3
-        - EXPOSE_PORT=9000
-        - SERVICE_NAME=php
-    volumes:
-      - ./src:/var/www/html
+        - PHP_BUILD_IMAGE_NAME:php-fpm
+        - PHP_BUILD_IMAGE_TAG:1.0.1
+        - BUILD_COMPOSER_VERSION=2.3
     environment:
-      - DATABASE_TYPE=${DATABASE_TYPE}
-      - DATABASE_HOST=${DATABASE_HOST}
-      - DATABASE_NAME=${DATABASE_NAME}
-      - DATABASE_USER=${DATABASE_APP_USER}
-      - DATABASE_PWD=${DATABASE_APP_PASSWORD}
+      - DATABASE_TYPE:${DATABASE_TYPE}
+      - DATABASE_HOST:${DATABASE_HOST}
+      - DATABASE_NAME:${DATABASE_NAME}
+      - DATABASE_USER:${DATABASE_APP_USER}
+      - DATABASE_PWD:${DATABASE_APP_PASSWORD}

@@ -1,0 +1,12 @@
+version: "3.4"
+
+services:
+  php:
+    build:
+      context: ./app
+      dockerfile: app/.docker/php/Dockerfile.local
+      args:
+        - PHP_BUILD_IMAGE_NAME:php-fpm-xdebug
+        - PHP_BUILD_IMAGE_TAG:1.0.1
+    volumes:
+      - ./app:/app

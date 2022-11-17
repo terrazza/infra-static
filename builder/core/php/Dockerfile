@@ -1,7 +1,12 @@
+# ----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
+# production-stage
+# ----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 ARG PHP_VERSION
 ARG ALPINE_VERSION
 
-FROM php:${PHP_VERSION}-fpm-alpine${ALPINE_VERSION} as production-stage
+FROM php:${PHP_VERSION}-fpm-alpine${ALPINE_VERSION} as prod
 
 ARG YAML_VERSION
 
@@ -50,12 +55,11 @@ RUN apk --no-cache --virtual .build-deps add ${BUILD_DEPS} \
     && docker-php-ext-enable ${PHP_EXT_ENABLE} \
     && docker-php-ext-configure ${PHP_EXT_CONFIG} \
     && docker-php-ext-install ${PHP_EXT_INSTALL} \
+# cleaning
     && apk del --purge .build-deps \
     && apk add --update dumb-init fcgi \
     && rm -rf /var/cache/apk/* /tmp/* /var/tmp/* /usr/share/doc/* /usr/share/man/*
-#
-# set this as production environment
-#
+
 RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
 #
@@ -103,20 +107,57 @@ COPY php-conf/*.ini $PHP_INI_DIR/conf.d/
 ENV PHP_FPM_INI_DIR="/usr/local/etc/php-fpm.d"
 COPY fpm-conf/*.conf ${PHP_FPM_INI_DIR}/
 
-#
+# CMD [ "php-fpm", "--allow-to-run-as-root" ]
+
+# ----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # debug-stage
+# ----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
+ENV APK_ADD \
+    git
+
+FROM prod as local
+
+ARG XDEBUG_VERSION
+
+RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
+    && apk add --update --no-cache ${APK_ADD} \
+# setup xdebug
+    && pecl install xdebug-${YAML_VERSION} \
+    && docker-php-ext-enable xdebug \
+    && echo "xdebug.remote_enable=on" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo "xdebug.remote_autostart=off" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo "xdebug.remote_port=9000" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo "xdebug.remote_handler=dbgp" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo "xdebug.remote_connect_back=0" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo "xdebug.idekey=mertblog.net" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo "xdebug.remote_host=localhost" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+# install composer
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
+# cleaning
+    && rm -rf /tmp/* \
+    && apk del -f .build-deps
+
+RUN cp "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
+
 #
-# FROM production-stage as debug-stage
-#
-# ARG XDEBUG_VERSION
-#
-# local environment
+# configure local PHP
 #
 # php-conf/[opcache] local overwrites
-# ENV PHP_OPCACHE_ENABLE="0"
-# ENV PHP_OPCACHE_MEMORY_CONSUMPTION="256"
-# ENV PHP_OPCACHE_MAX_ACCELERATED_FILES="2000"
-# ENV PHP_OPCACHE_PRELOAD=""
+ENV PHP_OPCACHE_ENABLE="0"
+ENV PHP_OPCACHE_MEMORY_CONSUMPTION="256"
+ENV PHP_OPCACHE_MAX_ACCELERATED_FILES="2000"
+ENV PHP_OPCACHE_PRELOAD=""
 # php-conf/[PHP] local overwrites
-# ENV PHP_MAX_EXECUTION_TIME="3600"
-# ENV PHP_REALPATH_CACHE_TTL="600"
+ENV PHP_MAX_EXECUTION_TIME="3600"
+ENV PHP_REALPATH_CACHE_TTL="600"
+
+#
+# add the configuration files
+#
+COPY php-conf/*.ini $PHP_INI_DIR/conf.d/
+ENV PHP_FPM_INI_DIR="/usr/local/etc/php-fpm.d"
+COPY fpm-conf/*.conf ${PHP_FPM_INI_DIR}/
+
+# CMD [ "php-fpm", "--allow-to-run-as-root" ]

@@ -1,0 +1,39 @@
+ARG BUILD_COMPOSER_VERSION
+ARG PHP_BUILD_IMAGE_NAME
+ARG PHP_BUILD_IMAGE_TAG
+ARG PHP_SERVICE_NAME
+ARG PHP_SERVICE_PORT
+ARG PHP_SERVICE_CONFIG_DIR
+
+ENV COMPOSER_VERSION=${BUILD_COMPOSER_VERSION}
+ENV BUILD_IMAGE_NAME=${PHP_BUILD_IMAGE_NAME}
+ENV BUILD_IMAGE_TAG=${PHP_BUILD_IMAGE_TAG}
+ENV SERVICE_NAME=${PHP_SERVICE_NAME}
+ENV SERVICE_PORT=${PHP_SERVICE_PORT}
+ENV SERVICE_CONFIG_DIR=${PHP_SERVICE_CONFIG_DIR}
+ENV PHP_FPM_INI_DIR="/usr/local/etc/php-fpm.d"
+
+FROM composer:${COMPOSER_VERSION} as production-build-stage
+
+WORKDIR /app
+COPY ./composer.json ./composer.json
+COPY ./composer.lock ./composer.lock
+
+ENV COMPOSER_CACHE_DIR=/app/.cache/composer
+
+RUN composer install \
+    --no-interaction \
+    --no-dev \
+    --optimize-autoloader
+
+#
+# completed production mode
+#
+FROM ${BUILD_IMAGE_NAME}:${BUILD_IMAGE_TAG} as production-stage
+
+WORKDIR /app
+COPY --from=build-stage /app ./
+ENV PHP_FPM_PM_LISTEN="${SERVICE_NAME}:${SERVICE_PORT}"
+COPY ${SERVICE_CONFIG_DIR}/fpm-conf/*.conf ${PHP_FPM_INI_DIR}/
+
+EXPOSE ${SERVICE_PORT}

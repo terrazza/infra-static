@@ -3,14 +3,14 @@ set -e
 
 function exit_help() {
   if [[ ! -z ${1} ]];then
-    echo "<E>${1}"
+    echo "$(tput setaf 1)[$(date)]<E> ${1}$(tput sgr 0)"
     echo
   fi
   echo "Usage: docker-compose.sh [SERVICE_NAME] [COMMAND] (OPTIONS...)"
   echo
-  echo "requirements"
-  echo "   SERVICE_NAME is an existing path within"
-  echo "   /.docker-compose.yml"
+  echo "Arguments:"
+  echo "   SERVICE_NAME                   is an existing path within"
+  echo "                                  /.docker-compose.yml"
   echo
   echo "Options:"
   echo "--preview                         echo built Command"
@@ -52,7 +52,18 @@ function exit_help() {
     exit 1
   fi
 }
-DOCKER_COMPOSE_FILE=docker-compose.yml
+
+#
+# CONSTANT ARGS
+#
+BUILD_ARG_FILE=.build.args
+DOCKER_COMPOSE_FILE_PATTERN=docker-compose.y*ml
+DOCKER_COMPOSE_LOCAL_FILE_PATTERN=docker-compose.local.y*ml
+CMD="docker-compose"
+
+#
+#
+#
 SERVICE_NAME=${1}
 if [[ -z ${SERVICE_NAME} ]]; then
   exit_help "argument [SERVICE_NAME] missing"
@@ -61,15 +72,44 @@ if [[ ! -d ${SERVICE_NAME} ]]; then
   exit_help "service/directory ${SERVICE_NAME} does not exists"
 fi
 
-if [[ ! -f ${SERVICE_NAME}/${DOCKER_COMPOSE_FILE} ]]; then
-  echo
-  echo "${SERVICE_NAME}/${DOCKER_COMPOSE_FILE} file does not exists"
-  exit_help
+DOCKER_COMPOSE_FILE=$(ls ${SERVICE_NAME}/${DOCKER_COMPOSE_FILE_PATTERN} | grep "${1}" | awk '{print $1}')
+if [[ -z ${DOCKER_COMPOSE_FILE} ]]; then
+  exit_help "${SERVICE_NAME}/${DOCKER_COMPOSE_FILE_PATTERN} file does not exists"
 fi
-CMD="docker-compose -f ${SERVICE_NAME}/${DOCKER_COMPOSE_FILE}"
-CMD="docker-compose"
-y=1
+
+
 ARGUMENTS=( "$@" )
+#
+# handle --local property
+#
+y=1
+while [[ $y -lt ${#ARGUMENTS[@]} ]]
+do
+  ARGUMENT=${ARGUMENTS[$y]}
+  case ${ARGUMENT} in
+    --local)
+      DOCKER_COMPOSE_LOCAL_FILE=$(ls ${SERVICE_NAME}/${DOCKER_COMPOSE_LOCAL_FILE_PATTERN} | grep "${1}" | awk '{print $1}')
+      if [[ -z ${DOCKER_COMPOSE_FILE} ]]; then
+        exit_help "${SERVICE_NAME}/${DOCKER_COMPOSE_LOCAL_FILE_PATTERN} file does not exists"
+      fi
+      #
+      # get basename of COMPOSE_FILE(s)
+      #
+      DOCKER_COMPOSE_FILE="$(basename -- ${DOCKER_COMPOSE_FILE})"
+      DOCKER_COMPOSE_LOCAL_FILE="$(basename -- ${DOCKER_COMPOSE_LOCAL_FILE})"
+      CMD="${CMD} --file ${DOCKER_COMPOSE_FILE} --file ${DOCKER_COMPOSE_LOCAL_FILE}"
+      (( y++))
+    ;;
+    *)
+      (( y++))
+    ;;
+  esac
+done
+
+#
+# common stuff
+#
+y=1
 while [[ $y -lt ${#ARGUMENTS[@]} ]]
 do
   ARGUMENT=${ARGUMENTS[$y]}
@@ -78,6 +118,37 @@ do
       (( y++))
       CONTAINER_NAME=${ARGUMENTS[$y]}
       CMD="${CMD} exec -it ${CONTAINER_NAME} /bin/${ARGUMENT}"
+      ECHO_STEPS=1
+      (( y++))
+    ;;
+    #
+    # skip --local argument (handled above)
+    #
+    --local)
+      (( y++))
+    ;;
+    up)
+      CMD="${CMD} ${ARGUMENT}"
+      #
+      # source .build.args
+      #
+      if [[ -f ${SERVICE_NAME}/${BUILD_ARG_FILE} ]]; then
+        source ${SERVICE_NAME}/${BUILD_ARG_FILE}
+      fi
+      (( y++))
+    ;;
+    build)
+      ECHO_STEPS=1
+      CMD="${CMD} ${ARGUMENT}"
+      #
+      # source .build.args
+      # + bypass .build.args into -build-args
+      #
+      if [[ -f ${SERVICE_NAME}/${BUILD_ARG_FILE} ]]; then
+        source ${SERVICE_NAME}/${BUILD_ARG_FILE}
+        # BUILD_ARGS=$(cat ${SERVICE_NAME}/${BUILD_ARG_FILE} | sed 's@^@--build-arg @g' | paste -sd ' ')
+        # CMD="${CMD} ${BUILD_ARGS}"
+      fi
       (( y++))
     ;;
     exec)
@@ -93,19 +164,22 @@ do
     ;;
   esac
 done
+
 #
-# execute our just preview prepared CMD
+# execute or just preview prepared CMD
 #
 start=`date +%s`
-echo
-echo "<I>start docker-compose.sh: $(date)"
-echo "<I>switch to directory ${SERVICE_NAME}"
-echo "<I>execute ${CMD}"
+if [[ ! -z ${ECHO_STEPS} ]] || [[ ! -z ${PREVIEW_CMD} ]]; then
+  echo "[$(date)]<I> switch to directory ${SERVICE_NAME}"
+  echo "[$(date)]<I> start execute command: ${CMD}"
+fi;
 if [[ -z ${PREVIEW_CMD} ]]; then
   cd ${SERVICE_NAME}
   ${CMD}
 fi
-end=`date +%s`
-runtime=$((end-start))
-echo "<I>end docker-compose.sh: $(date) (runtime: ${runtime} sec)"
-echo
+if [[ ! -z ${ECHO_STEPS} ]]; then
+  end=`date +%s`
+  runtime=$((end-start))
+  echo "[$(date)]<I> end execute command: (runtime: ${runtime} sec)"
+  echo
+fi
