@@ -4,11 +4,14 @@ services:
   php:
     build:
       context: ./app
-      dockerfile: app/.docker/php/Dockerfile
+      dockerfile: .docker/php/Dockerfile
       args:
-        - PHP_BUILD_IMAGE_NAME:php-fpm
-        - PHP_BUILD_IMAGE_TAG:1.0.1
+        - PHP_BUILD_IMAGE_NAME=php-fpm
+        - PHP_BUILD_IMAGE_TAG=1.0.1
         - BUILD_COMPOSER_VERSION=2.3
+        - PHP_SERVICE_NAME=php
+        - PHP_SERVICE_NAME=9000
+        - PHP_SERVICE_CONFIG_DIR=.docker/php
     environment:
       - DATABASE_TYPE:${DATABASE_TYPE}
       - DATABASE_HOST:${DATABASE_HOST}

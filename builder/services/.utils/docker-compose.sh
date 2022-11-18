@@ -145,7 +145,8 @@ do
       # + bypass .build.args into -build-args
       #
       if [[ -f ${SERVICE_NAME}/${BUILD_ARG_FILE} ]]; then
-        source ${SERVICE_NAME}/${BUILD_ARG_FILE}
+        echo "no"
+        # source ${SERVICE_NAME}/${BUILD_ARG_FILE}
         # BUILD_ARGS=$(cat ${SERVICE_NAME}/${BUILD_ARG_FILE} | sed 's@^@--build-arg @g' | paste -sd ' ')
         # CMD="${CMD} ${BUILD_ARGS}"
       fi
