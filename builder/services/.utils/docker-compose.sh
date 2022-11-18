@@ -129,27 +129,11 @@ do
     ;;
     up)
       CMD="${CMD} ${ARGUMENT}"
-      #
-      # source .build.args
-      #
-      if [[ -f ${SERVICE_NAME}/${BUILD_ARG_FILE} ]]; then
-        source ${SERVICE_NAME}/${BUILD_ARG_FILE}
-      fi
       (( y++))
     ;;
     build)
       ECHO_STEPS=1
       CMD="${CMD} ${ARGUMENT}"
-      #
-      # source .build.args
-      # + bypass .build.args into -build-args
-      #
-      if [[ -f ${SERVICE_NAME}/${BUILD_ARG_FILE} ]]; then
-        echo "no"
-        # source ${SERVICE_NAME}/${BUILD_ARG_FILE}
-        # BUILD_ARGS=$(cat ${SERVICE_NAME}/${BUILD_ARG_FILE} | sed 's@^@--build-arg @g' | paste -sd ' ')
-        # CMD="${CMD} ${BUILD_ARGS}"
-      fi
       (( y++))
     ;;
     exec)
