@@ -137,7 +137,14 @@ do
       (( y++))
     ;;
     exec)
-      exit_help "COMMAND ${ARGUMENT} not supported (use bash or sh)"
+      (( y++))
+      CONTAINER_NAME=${ARGUMENTS[$y]}
+      (( y++))
+      EXEC_CMD=${ARGUMENTS[$y]}
+      CMD="${CMD} exec -it ${CONTAINER_NAME} /bin/bash ${EXEC_CMD}"
+      ECHO_STEPS=1
+      (( y++))
+#      exit_help "COMMAND ${ARGUMENT} not supported (use bash or sh)"
     ;;
     --preview)
       PREVIEW_CMD=1

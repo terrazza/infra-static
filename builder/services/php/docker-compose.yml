@@ -1,20 +1,34 @@
 version: "3.4"
 
 services:
+  nginx:
+    image: nginx-prod:1.0.1
+    container_name: ${NAMESPACE}_nginx
+    volumes:
+      - ./app/.docker/nginx/locations/002-fast-cgi.conf:/etc/nginx/locations/002-fast-cgi.conf
+      - ./app/public:/usr/share/nginx
+    ports:
+      - "80:80"
+
   php:
-    build:
-      context: ./app
-      dockerfile: .docker/php/Dockerfile
-      args:
-        - PHP_BUILD_IMAGE_NAME=php-fpm-prod
-        - PHP_BUILD_IMAGE_TAG=1.0.1
-        - BUILD_COMPOSER_VERSION=2.3
-        - PHP_SERVICE_NAME=php
-        - PHP_SERVICE_PORT=9000
-        - PHP_SERVICE_CONFIG_DIR=.docker/php
+    image: php-fpm-local:1.0.1
+    container_name: ${NAMESPACE}_php
+#    build:
+#      context: ./app
+#      dockerfile: .docker/php/Dockerfile.local
+#      args:
+#        - PHP_BUILD_IMAGE_NAME=php-fpm-local
+#        - PHP_BUILD_IMAGE_TAG=1.0.1
+    ports:
+      - "9000:9000"
     environment:
       - DATABASE_TYPE:${DATABASE_TYPE}
       - DATABASE_HOST:${DATABASE_HOST}
       - DATABASE_NAME:${DATABASE_NAME}
       - DATABASE_USER:${DATABASE_APP_USER}
       - DATABASE_PWD:${DATABASE_APP_PASSWORD}
+    volumes:
+      - ./app:/var/www/html
+      - ./app/.docker/php/fpm-conf/zzz_200_www_listen.conf:/usr/local/etc/php-fpm.d/zzz_200_www_listen.conf
+#      - ./app/.docker/php/fpm-conf/zzz.txt:/usr/local/etc/php-fpm.d/zzz_200_www_listen.conf
+#      - ./app/.docker/php/fpm-conf/php.socket:/usr/local/etc/php-fpm.d/php.socket

@@ -1,6 +1,6 @@
 ARG IMAGE_NAME
 ARG IMAGE_TAG
-FROM ${IMAGE_NAME}:${IMAGE_TAG} as app_nginx
+FROM ${IMAGE_NAME}:${IMAGE_TAG} as prod
 
 ENV APK_ADD \
     bash \

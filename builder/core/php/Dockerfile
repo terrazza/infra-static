@@ -107,7 +107,7 @@ COPY php-conf/*.ini $PHP_INI_DIR/conf.d/
 ENV PHP_FPM_INI_DIR="/usr/local/etc/php-fpm.d"
 COPY fpm-conf/*.conf ${PHP_FPM_INI_DIR}/
 
-# CMD [ "php-fpm", "--allow-to-run-as-root" ]
+CMD [ "php-fpm", "--allow-to-run-as-root" ]
 
 # ----------------------------------------------------------------------------
 # ----------------------------------------------------------------------------
@@ -164,4 +164,4 @@ COPY php-conf/*.ini $PHP_INI_DIR/conf.d/
 ENV PHP_FPM_INI_DIR="/usr/local/etc/php-fpm.d"
 COPY fpm-conf/*.conf ${PHP_FPM_INI_DIR}/
 
-# CMD [ "php-fpm", "--allow-to-run-as-root" ]
+CMD [ "php-fpm", "--allow-to-run-as-root" ]
