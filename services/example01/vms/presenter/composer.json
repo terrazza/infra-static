@@ -1,21 +1,12 @@
 {
-    "name": "noframework/infra-static-api",
+    "name": "noframework/presenter",
     "version": "0.1",
-    "description": "helloworld",
+    "description": "Presenter Service",
     "license": "MIT",
-    "config" : {
-        "vendor-dir" : "plugin"
-    },
     "authors": [
         {
             "name": "Peter Fux",
             "email": "it@noframework.io"
-        }
-    ],
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "https://gitlab.autopro24.at/api/v4/group/99/-/packages/composer/packages.json"
         }
     ],
     "require": {
@@ -28,7 +19,7 @@
     },
     "autoload": {
         "psr-4": {
-            "noframework\\InfraStaticApi\\" : "src"
+            "noframework\\Presenter\\" : "src"
         }
     },
     "require-dev" : {
@@ -36,7 +27,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "noframework\\Test\\InfraStaticApi\\": "tests"
+            "noframework\\Test\\Presenter\\": "tests"
         }
     },
     "minimum-stability": "dev"
