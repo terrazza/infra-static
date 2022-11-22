@@ -3,8 +3,8 @@ version: "3.4"
 services:
   php:
     build:
-      context: ./app
-      dockerfile: .docker/php/Dockerfile
+      context: app
+      dockerfile: app/.docker/php/Dockerfile
       args:
         - PHP_BUILD_IMAGE_NAME=php-fpm-prod
         - PHP_BUILD_IMAGE_TAG=1.0.1
