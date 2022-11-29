@@ -2,12 +2,21 @@
 
 ### start mysql-server
 
-docker-compose up -d
+```docker-compose up -d```
 
-   1. without any database
-   2. without any users
-   3. JUST with MYSQL_ROOT_PASSWORD (ARG)
+### remove persistent database/volume
 
-### provide entry point to create databases
+```docker-compose down -v```
 
-docker-compose run {servicename}
+### create new database
+
+```docker-compose exec -it {servicename} patch-db.sh {database}```
+
+### create new user
+
+```docker-compose exec -it {servicename} patch-user.sh {database} {user} {password} {grant-type}```
+
+grant-type(s) are limited and covert by:
+- mig (=ALL)
+- app (=SELECT,UPDATE,INSERT,DELETE,EXECUTE)
+- ro (=SELECT)
