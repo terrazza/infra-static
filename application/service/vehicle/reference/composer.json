@@ -1,7 +1,7 @@
 {
-    "name": "noframework/presenter",
+    "name": "noframework/vehicle-reference",
     "version": "0.1",
-    "description": "Presenter Service",
+    "description": "Vehicle Reference Service",
     "license": "MIT",
     "authors": [
         {
@@ -19,7 +19,7 @@
     },
     "autoload": {
         "psr-4": {
-            "noframework\\Presenter\\" : "src"
+            "noframework\\Vehicle\\Reference\\" : "src"
         }
     },
     "require-dev" : {
@@ -27,7 +27,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "noframework\\Test\\Presenter\\": "tests"
+            "noframework\\Test\\Vehicle\\Reference\\": "tests"
         }
     },
     "minimum-stability": "dev"

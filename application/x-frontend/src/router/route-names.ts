@@ -1,0 +1,6 @@
+export const DEALERS = 'DEALERS'
+export const DEALER = 'DEALER'
+export const EXPORTS = 'EXPORTS'
+export const LOCATIONS = 'LOCATIONS'
+export const VINTOOL = 'VINTOOL'
+export const VINTOOL_EDIT = 'VINTOOL_EDIT'

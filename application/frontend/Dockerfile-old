@@ -1,0 +1,31 @@
+
+FROM node:16.17.1-alpine as build-stage
+
+WORKDIR /app
+
+# copy packages + env files
+COPY package*.json ./
+
+# install project depencies
+RUN npm install && npm audit fix --force
+
+COPY src ./src
+COPY public ./public
+
+COPY index.html .
+COPY tsconfig.json .
+COPY tsconfig.node.json .
+
+COPY vite.config.ts .
+
+EXPOSE 8080
+
+RUN npm run build
+
+FROM nginx:1.20-alpine as production-stage
+
+# copy production artifacts from build stage to prodcution image
+COPY --from=build-stage /app/dist /usr/share/nginx/html
+
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

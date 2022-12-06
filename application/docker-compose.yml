@@ -1,0 +1,47 @@
+version: "3.4"
+
+services:
+#  nginx:
+#    image: nginx-prod:1.0.1
+#    container_name: vms_reference_nginx
+#    volumes:
+#      - ./html:/usr/share/nginx
+#    ports:
+#      - "80:80"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+#    image: node:lts
+    working_dir: /var/www/html/app
+#    command: ["npm run build"]
+    ports:
+      - "80:80"
+#    expose:
+#      - 8000
+    volumes:
+      - ./frontend/:/var/www/html/app
+#    tty: true
+
+  vehicle_mgr:
+    image: php-fpm-local:1.0.1
+    environment:
+#      DATABASE_TYPE: ${DATABASE_TYPE}
+      DATABASE_HOST: ${DATABASE_HOST}
+      DATABASE_NAME: ${DATABASE_NAME}
+      DATABASE_USER: ${DATABASE_APP_USER}
+      DATABASE_PWD: ${DATABASE_APP_PASSWORD}
+    volumes:
+      - ./service/vehicle/mgr:/var/www/html
+
+  vehicle_reference:
+    image: php-fpm-local:1.0.1
+    environment:
+#      DATABASE_TYPE: ${DATABASE_TYPE}
+      DATABASE_HOST: ${DATABASE_HOST}
+      DATABASE_NAME: ${DATABASE_NAME}
+      DATABASE_USER: ${DATABASE_APP_USER}
+      DATABASE_PWD: ${DATABASE_APP_PASSWORD}
+    volumes:
+      - ./service/vehicle/reference:/var/www/html

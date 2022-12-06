@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="Content-Type"
           content="text/html; charset=utf-8">
-    <title>noFramework.io - References</title>
+    <title>noFramework.io - Vehicle</title>
 </head>
 <body>
 <h1>summary (php:<?=phpversion()?>, now:<?=date('Y-m-d H:i:s')?>)</h1>

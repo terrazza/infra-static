@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-BASE_FOLDER=$(realpath $(dirname "$0")/..)
+BASE_FOLDER=$(realpath $(dirname "$0"))
 BUILD_ARG_FILE=".build.args"
 DOCKER_FILE="Dockerfile"
 

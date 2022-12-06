@@ -10,5 +10,5 @@ initialize() {
 
 exists_database() {
   showDatabase=$(docker_process_sql --database=mysql -e "SHOW DATABASES LIKE '${1}'")
-  [[ "${showDatabase}" =~ "${DATABASE}" ]]
+  [[ "${showDatabase}" =~ "${1}" ]]
 }
